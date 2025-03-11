@@ -5,6 +5,7 @@ import {
   House,
   LayoutDashboard,
   LogOutIcon,
+  MenuIcon,
   PlusCircleIcon,
   User2Icon,
 } from "lucide-react";
@@ -13,6 +14,7 @@ import { useSignOut } from "@/lib/query/queries";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "./theme-toggle";
 import Link from "next/link";
+import { Button } from "./ui/button";
 
 export default function Header() {
   const router = useRouter();
@@ -35,7 +37,7 @@ export default function Header() {
           <span className="text-red-500">X</span>
         </h2>
       </div>
-      <div className="flex items-center gap-2">
+      <div className="hidden md:flex items-center gap-2">
         <NavButton
           href="/dashboard/create"
           label="dashboard"
@@ -67,6 +69,11 @@ export default function Header() {
         <ThemeToggle />
         <div className="bg-red-500 h-5 w-1"></div>{" "}
         <NavButton label="Logout" icon={LogOutIcon} onClick={handleLogOut} />
+      </div>
+      <div className="flex md:hidden">
+        <Button variant="ghost" className="rounded-full w-10">
+          <MenuIcon />
+        </Button>
       </div>
     </div>
   );
