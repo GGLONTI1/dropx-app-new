@@ -26,7 +26,7 @@ export default function Header() {
   };
 
   return (
-    <div className="h-16 flex items-center justify-between border-b border-black dark:border-white ">
+    <div className="min-h-16 flex items-center justify-between border-b border-black dark:border-white ">
       <div className="flex items-center">
         <h2 className="text-xl font-semibold">
           <Link href="/dashboard">

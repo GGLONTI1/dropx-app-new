@@ -180,14 +180,13 @@ export async function getCouriers() {
   }
 }
 
-export async function getOrderById(author: string) {
+export async function getOrdersById(author: string) {
   try {
     const orders = await database.listDocuments(
       process.env.DATABASE_ID!,
       process.env.ORDER_COLLECTION_ID!,
       [Query.equal("author", author)]
     );
-    console.log("Orders fetched successfully:", orders.documents);
     return orders.documents;
   } catch (error) {
     console.error("Error Loading order:", error);
@@ -228,7 +227,7 @@ export async function deleteOrderById(orderId: string) {
   }
 }
 
-export async function viewOrder(orderId: string) {
+export async function getOrderById(orderId: string) {
   try {
     const order = await database.getDocument(
       process.env.DATABASE_ID!,

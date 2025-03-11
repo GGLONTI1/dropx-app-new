@@ -6,10 +6,10 @@ import {
   SignIn,
   SignOut,
   SignUp,
-  getOrderById,
   updateProfile,
   deleteOrderById,
-  viewOrder,
+  getOrdersById,
+  getOrderById,
 } from "../appwrite/auth";
 import { ProfileFormValues, userDataType } from "@/typings";
 import { OrderData } from "@/components/forms/OrderForm";
@@ -71,12 +71,12 @@ export const useGetCouriers = () => {
   });
 };
 
-export const useGetOrderById = () => {
+export const useGetOrdersById = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (userId: string) => getOrderById(userId),
+    mutationFn: (userId: string) => getOrdersById(userId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["useGetOrderById"] });
+      queryClient.invalidateQueries({ queryKey: ["useGetOrdersById"] });
     },
   });
 };
@@ -114,4 +114,11 @@ export const useViewOrder = () => {
         queryFn: () => viewOrder(orderId),
       }),
   };
+};
+
+export const useGetOrderById = (orderId: string) => {
+  return useQuery({
+    queryKey: ["getOrderById", orderId],
+    queryFn: () => getOrderById(orderId),
+  });
 };

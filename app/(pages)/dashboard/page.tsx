@@ -6,7 +6,7 @@ import { useUserContext } from "@/context/AuthContext";
 import {
   useDeleteOrderById,
   useGetOrderById,
-  useViewOrder,
+  useGetOrdersById,
 } from "@/lib/query/queries";
 import { useRouter } from "next/navigation";
 import {
@@ -62,21 +62,15 @@ const Dashboard = () => {
   const router = useRouter();
   const { user } = useUserContext();
   const { theme } = useTheme();
-  const { mutate, data: orders, isPending, error } = useGetOrderById();
+  const { mutate, data: orders, isPending } = useGetOrdersById();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const { mutateAsync: deleteOrderById } = useDeleteOrderById();
-  const { fetchOrderDetails } = useViewOrder();
 
   const handleViewOrder = async (orderId: string) => {
-    try {
-      const order = await fetchOrderDetails(orderId);
-      console.log("Order Details:", order);
-    } catch (error) {
-      console.error("Error fetching order details", error);
-    }
+    router.push(`/dashboard/${orderId}`);
   };
 
   useEffect(() => {

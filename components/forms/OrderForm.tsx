@@ -53,7 +53,7 @@ type OrderValues = {
   target: string;
   phone: string;
   price: string;
-  date: string;
+  date: Date | undefined;
   time: string;
   courier: string;
   author: string;
@@ -82,7 +82,7 @@ const OrderForm = () => {
       target: "",
       phone: "",
       courier: "",
-      date: "",
+      date: undefined,
       time: "",
       price: "",
     },
@@ -183,13 +183,12 @@ const OrderForm = () => {
                       <PopoverContent className="w-auto p-0" align="start">
                         <Calendar
                           mode="single"
-                          selected={field.value}
+                          selected={field.value as Date | undefined}
                           onSelect={(newValue) => {
                             field.onChange(newValue);
                             setOpen(false);
                           }}
                           fromDate={today}
-                          initialFocus
                         />
                       </PopoverContent>
                     </Popover>
