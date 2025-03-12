@@ -2,7 +2,6 @@
 
 import {
   ContactIcon,
-  House,
   LayoutDashboard,
   LogOutIcon,
   MenuIcon,
@@ -26,7 +25,6 @@ export default function Header() {
       router.push("/sign-in");
     }
   };
-
   return (
     <div className="min-h-16 flex items-center justify-between border-b border-black dark:border-white ">
       <div className="flex items-center">

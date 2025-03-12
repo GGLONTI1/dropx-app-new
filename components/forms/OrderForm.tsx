@@ -259,7 +259,11 @@ const OrderForm = () => {
               )}
             />
             <div className="sticky bottom-0 bg-white dark:bg-black w-full py-4 gap-2 flex items-center justify-center">
-              <Button className="flex w-full" type="button">
+              <Button
+                className="flex w-full"
+                type="button"
+                onClick={() => router.push("/dashboard")}
+              >
                 Cancel
               </Button>
               <Button

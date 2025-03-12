@@ -241,3 +241,19 @@ export async function getOrderById(orderId: string) {
     throw error;
   }
 }
+
+export async function updateOrder(orderId: string, orderData: OrderData) {
+  try {
+    const response = await database.updateDocument(
+      process.env.DATABASE_ID!,
+      process.env.ORDER_COLLECTION_ID!,
+      orderId,
+      orderData
+    );
+    console.log("Order updated successfully:", response);
+    return response;
+  } catch (error) {
+    console.error("Error updating order:", error);
+    throw error;
+  }
+}
