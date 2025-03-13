@@ -105,13 +105,13 @@ export const useDeleteOrderById = () => {
   });
 };
 
-export const useViewOrder = () => {
+export const useViewOrder = (orderId: string) => {
   const queryClient = useQueryClient();
   return {
     fetchOrderDetails: (orderId: string) =>
       queryClient.fetchQuery({
         queryKey: ["orderDetails", orderId],
-        queryFn: () => viewOrder(orderId),
+        queryFn: () => useViewOrder(orderId),
       }),
   };
 };

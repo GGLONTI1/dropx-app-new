@@ -52,8 +52,7 @@ type Order = {
   target: string;
   phone: string;
   status: string;
-  date: string;
-  time: string;
+  datetime: string | Date;
   courier: { firstName: string; mobile: string };
   price: number;
 };
@@ -115,7 +114,8 @@ const Dashboard = () => {
           variant="ghost"
           onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
         >
-          Address <ArrowUpDown className="ml-2 h-4 w-4" />
+          <span className="dark:text-white font-bold">Address</span>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
         </Button>
       ),
       cell: ({ row }) => (
@@ -126,7 +126,7 @@ const Dashboard = () => {
     },
     {
       accessorKey: "status",
-      header: () => <span className="dark:text-white">Status</span>,
+      header: () => <span className="dark:text-white ">Status</span>,
       cell: ({ row }) => (
         <span
           className={`capitalize px-2 py-1 rounded-md text-xs font-medium border text-white
@@ -142,26 +142,20 @@ const Dashboard = () => {
         </span>
       ),
     },
+
     {
-      accessorKey: "date",
-      header: () => <span className="dark:text-white">Date</span>,
+      accessorKey: "datetime",
+      header: () => <span className="dark:text-white md:flex hidden">Date & Time</span>,
       cell: ({ row }) => {
-        const date = row.getValue("date");
+        const datetime = row.original.datetime;
         return (
-          <span className="text-black dark:text-white">
-            {typeof date === "string" || typeof date === "number"
-              ? format(new Date(date), "MMMM d, yyyy")
+          <span className="text-black dark:text-white md:flex hidden">
+            {datetime
+              ? `${format(new Date(datetime), "d MMMM yyyy 'at' hh:mm a")}`
               : ""}
           </span>
         );
       },
-    },
-    {
-      accessorKey: "time",
-      header: () => <span className="dark:text-white">Time</span>,
-      cell: ({ row }) => (
-        <span className="text-black dark:text-white">{row.original.time}</span>
-      ),
     },
 
     {

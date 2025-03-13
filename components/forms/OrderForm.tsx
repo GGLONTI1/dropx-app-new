@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-import { format, setDate } from "date-fns";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -23,14 +22,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-import { cn } from "@/lib/utils";
-import { CalendarIcon, ClockIcon } from "lucide-react";
-import { Calendar } from "../ui/calendar";
 import { useGetCouriers } from "@/lib/query/queries";
 import { useUserContext } from "@/context/AuthContext";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/lib/appwrite/auth";
+import { SmartDatetimeInput } from "../ui/smart-datetime-input";
 
 const FormSchema = z.object({
   address: z.string().min(2, {
@@ -42,8 +39,10 @@ const FormSchema = z.object({
   phone: z.string().min(2, {
     message: "phone must not be empty",
   }),
-  date: z.date({ required_error: "A date of birth is required." }),
-  time: z.string().min(1, "Time is required"),
+  datetime: z.union([
+    z.date({ required_error: "Date is required." }),
+    z.string().min(1, "Time is required"),
+  ]),
   courier: z.string({ required_error: "Please select a courier to display." }),
   price: z.string().min(1, "Price is required"),
 });
@@ -53,8 +52,7 @@ type OrderValues = {
   target: string;
   phone: string;
   price: string;
-  date: Date | undefined;
-  time: string;
+  datetime: Date | string;
   courier: string;
   author: string;
 };
@@ -74,6 +72,7 @@ const OrderForm = () => {
   const today = new Date();
   const { user } = useUserContext();
   const router = useRouter();
+  const [selectedDateTime, setSelectedDateTime] = useState<Date | null>(null);
 
   const form = useForm<OrderData>({
     resolver: zodResolver(FormSchema),
@@ -82,8 +81,7 @@ const OrderForm = () => {
       target: "",
       phone: "",
       courier: "",
-      date: undefined,
-      time: "",
+      datetime: undefined,
       price: "",
     },
   });
@@ -154,71 +152,34 @@ const OrderForm = () => {
                 )}
               />
             </div>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <FormField
-                control={form.control}
-                name="date"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col w-full sm:w-[184px]">
-                    <FormLabel>Date</FormLabel>
-                    <Popover open={open} onOpenChange={setOpen}>
-                      <PopoverTrigger asChild>
-                        <FormControl>
-                          <Button
-                            variant={"outline"}
-                            className={cn(
-                              " pl-3 text-left font-normal",
-                              !field.value && "text-muted-foreground"
-                            )}
-                          >
-                            {field.value ? (
-                              format(field.value, "PPP")
-                            ) : (
-                              <span>Pick a date</span>
-                            )}
-                            <CalendarIcon className="ml-auto h-4 w-4 opacity-50" />
-                          </Button>
-                        </FormControl>
-                      </PopoverTrigger>
-                      <PopoverContent className="w-auto p-0" align="start">
-                        <Calendar
-                          mode="single"
-                          selected={field.value as Date | undefined}
-                          onSelect={(newValue) => {
-                            field.onChange(newValue);
-                            setOpen(false);
-                          }}
-                          fromDate={today}
-                        />
-                      </PopoverContent>
-                    </Popover>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="time"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col  w-full sm:w-[184px]">
-                    <FormLabel>Time</FormLabel>
-                    <FormControl>
-                      <div className="relative ">
-                        <Input
-                          type="time"
-                          {...field}
-                          value={field.value || ""}
-                          onChange={(e) => field.onChange(e.target.value)}
-                          className="w-full  appearance-none"
-                        />
-                        <ClockIcon className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 opacity-50" />
-                      </div>
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="datetime"
+              render={({ field }) => (
+                <div className="flex flex-col justify-center w-full">
+                  <FormLabel htmlFor="datetime" className="flex py-3">
+                    Choose Date & Time
+                  </FormLabel>
+                  <Popover open={open} onOpenChange={setOpen} modal={false}>
+                    <PopoverTrigger asChild>
+                      <SmartDatetimeInput
+                        value={field.value instanceof Date ? field.value : null}
+                        onValueChange={(date) => {
+                          field.onChange(date); 
+                          setOpen(false);
+                        }}
+                        placeholder="e.g., tomorrow at 5pm or in 2 hours"
+                      />
+                    </PopoverTrigger>
+                    <PopoverContent
+                      align="start"
+                      side="bottom"
+                    ></PopoverContent>
+                  </Popover>
+                  <FormMessage />
+                </div>
+              )}
+            />
             <FormField
               control={form.control}
               name="courier"
