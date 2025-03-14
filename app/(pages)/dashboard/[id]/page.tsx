@@ -22,11 +22,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
 import { useGetOrderById, useGetCouriers } from "@/lib/query/queries";
 import { updateOrder } from "@/lib/appwrite/auth";
 import { toast } from "sonner";
@@ -39,8 +34,8 @@ const FormSchema = z.object({
   phone: z.string().min(2),
   status: z.string().min(1),
   datetime: z.date(),
-  courier: z.string().min(1),
   price: z.string().min(1),
+  courier: z.string().min(1),
 });
 
 type OrderValues = {
@@ -59,7 +54,6 @@ const OrderEdit = () => {
   const router = useRouter();
   const pathname = usePathname();
   const orderId = pathname.split("/").pop() || "";
-  const [open, setOpen] = useState(false);
   const { data: orderDetails, isLoading } = useGetOrderById(orderId as string);
   const { data: couriers } = useGetCouriers();
 
@@ -70,9 +64,9 @@ const OrderEdit = () => {
       target: "",
       phone: "",
       status: "draft",
-      courier: "",
       datetime: undefined,
       price: "",
+      courier: "",
     },
   });
 
@@ -86,19 +80,17 @@ const OrderEdit = () => {
         datetime: orderDetails.datetime
           ? new Date(orderDetails.datetime)
           : undefined,
-        courier: orderDetails.courier,
         price: orderDetails.price,
+        courier: orderDetails.courier.$id,
       });
     }
   }, [orderDetails, form]);
 
-  interface Courier {
-    firstName: string;
-    lastName: string;
-    $id: string;
-  }
+  console.log(form.formState.errors);
 
   async function onSubmit(values: OrderValues) {
+    console.log(values);
+
     try {
       await updateOrder(orderId, {
         ...values,
@@ -171,22 +163,12 @@ const OrderEdit = () => {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Choose Date & Time</FormLabel>
-                  <Popover open={open} onOpenChange={setOpen}>
-                    <PopoverTrigger asChild>
-                      <SmartDatetimeInput
-                        value={field.value}
-                        onValueChange={(date) => {
-                          field.onChange(date);
-                          setOpen(false);
-                        }}
-                        placeholder="e.g., tomorrow at 5pm or in 2 hours"
-                      />
-                    </PopoverTrigger>
-                    <PopoverContent
-                      align="start"
-                      side="bottom"
-                    ></PopoverContent>
-                  </Popover>
+                  <SmartDatetimeInput
+                    value={field.value}
+                    onValueChange={field.onChange}
+                    placeholder="e.g., tomorrow at 5pm or in 2 hours"
+                  />
+
                   <FormMessage />
                 </FormItem>
               )}
@@ -201,9 +183,12 @@ const OrderEdit = () => {
                     <Select
                       onValueChange={field.onChange}
                       defaultValue={field.value}
+                      value={field.value}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select status" />
+                        <SelectValue placeholder="Select status">
+                          {field.value}
+                        </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="draft">Draft</SelectItem>
@@ -213,31 +198,6 @@ const OrderEdit = () => {
                       </SelectContent>
                     </Select>
                   </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="courier"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Select Courier</FormLabel>
-                  <Select
-                    value={field.value || orderDetails?.courier}
-                    onValueChange={field.onChange}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a courier" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {couriers?.map((courier: Courier) => (
-                        <SelectItem key={courier.$id} value={courier.$id}>
-                          {courier.firstName} {courier.lastName}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -252,6 +212,43 @@ const OrderEdit = () => {
                   <FormControl>
                     <Input type="number" {...field} />
                   </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+            <FormField
+              control={form.control}
+              name="courier"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Select Courier</FormLabel>
+                  <Select
+                    defaultValue={orderDetails?.courier?.$id}
+                    onValueChange={field.onChange}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select a courier">
+                        {couriers?.find((c: any) => c.$id === field.value)
+                          ? `${
+                              couriers.find((c: any) => c.$id === field.value)
+                                ?.firstName
+                            } ${
+                              couriers.find((c: any) => c.$id === field.value)
+                                ?.lastName
+                            }`
+                          : orderDetails?.courier
+                          ? `${orderDetails.courier.firstName} ${orderDetails.courier.lastName}`
+                          : "Select a courier"}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {couriers?.map((courier: any) => (
+                        <SelectItem key={courier.$id} value={courier.$id}>
+                          {courier.firstName} {courier.lastName}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
