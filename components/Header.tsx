@@ -14,6 +14,8 @@ import { useRouter } from "next/navigation";
 import { ThemeToggle } from "./theme-toggle";
 import Link from "next/link";
 import { Button } from "./ui/button";
+import { MobileNav } from "./mobile-nav";
+import { Sheet, SheetTrigger } from "./ui/sheet";
 
 export default function Header() {
   const router = useRouter();
@@ -69,9 +71,12 @@ export default function Header() {
         <NavButton label="Logout" icon={LogOutIcon} onClick={handleLogOut} />
       </div>
       <div className="flex md:hidden">
-        <Button variant="ghost" className="rounded-full w-10">
-          <MenuIcon />
-        </Button>
+        <Sheet>
+          <SheetTrigger asChild>
+            <button className="rounded-full w-10 h-10 flex items-center justify-center" />
+          </SheetTrigger>
+          <MobileNav />
+        </Sheet>
       </div>
     </div>
   );

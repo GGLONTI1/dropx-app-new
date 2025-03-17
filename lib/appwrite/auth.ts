@@ -213,19 +213,14 @@ export async function updateProfile(user: ProfileFormValues) {
     throw error;
   }
 }
-
-export async function deleteOrderById(orderId: string) {
-  try {
-    const response = await database.deleteDocument(
-      process.env.DATABASE_ID!,
-      process.env.ORDER_COLLECTION_ID!,
-      orderId
-    );
-  } catch (error) {
-    console.log(error);
-    throw error;
-  }
-}
+// async function deleteOrderById(orderId: string) {
+//   const response = await database.deleteDocument(
+//     process.env.DATABASE_ID!,
+//     process.env.ORDER_COLLECTION_ID!,
+//     orderId
+//   );
+//   return response;
+// }
 
 export async function getOrderById(orderId: string) {
   try {
@@ -257,4 +252,3 @@ export async function updateOrder(orderId: string, orderData: OrderData) {
     throw error;
   }
 }
-

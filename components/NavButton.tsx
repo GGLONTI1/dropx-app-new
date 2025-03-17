@@ -7,6 +7,7 @@ interface NavButtonProps {
   onClick?: () => void;
   label: string;
   title?: string;
+  className?: string;
 }
 
 export default function NavButton({

@@ -4,8 +4,7 @@ import * as React from "react";
 import { useEffect, useState } from "react";
 import { useUserContext } from "@/context/AuthContext";
 import {
-  useDeleteOrderById,
-  useGetOrderById,
+  // useDeleteOrderById,
   useGetOrdersById,
 } from "@/lib/query/queries";
 import { useRouter } from "next/navigation";
@@ -45,6 +44,7 @@ import Loading from "@/components/Loading";
 import { useTheme } from "next-themes";
 import LoadingBlack from "@/components/LoadingBlack";
 import { format } from "date-fns";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 type Order = {
   $id: string;
@@ -57,16 +57,32 @@ type Order = {
   price: number;
 };
 
+// function DeleteOrder({ orderId }: { orderId: string }) {
+//   const queryClient = useQueryClient();
+//   const { mutateAsync: deleteOrderById } = useDeleteOrderById();
+
+//   const mutation = useMutation({
+//     mutationFn: () => deleteOrderById(orderId),
+//     onSuccess: () => {
+//       queryClient.invalidateQueries({ queryKey: ["orders"] });
+//     },
+//   });
+
+//   return (
+//     <Button onClick={() => mutation.mutate()}>Delete Order</Button>
+//   );
+// }
+
 const Dashboard = () => {
   const router = useRouter();
   const { user } = useUserContext();
   const { theme } = useTheme();
-  const { mutate, data: orders, isPending } = useGetOrdersById();
+  const { mutate, data: fetchedOrders, isPending } = useGetOrdersById();
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const { mutateAsync: deleteOrderById } = useDeleteOrderById();
+  // const { mutateAsync: deleteOrderById } = useDeleteOrderById();
 
   const handleViewOrder = async (orderId: string) => {
     router.push(`/dashboard/${orderId}`);
@@ -78,9 +94,9 @@ const Dashboard = () => {
     }
   }, [user, mutate]);
 
-  function handleDelete(orderId: string) {
-    deleteOrderById(orderId);
-  }
+  // function handleDelete(orderId: string) {
+  //   deleteOrderById(orderId);
+  // }
 
   const columns: ColumnDef<Order>[] = [
     {
@@ -145,7 +161,9 @@ const Dashboard = () => {
 
     {
       accessorKey: "datetime",
-      header: () => <span className="dark:text-white md:flex hidden">Date & Time</span>,
+      header: () => (
+        <span className="dark:text-white md:flex hidden">Date & Time</span>
+      ),
       cell: ({ row }) => {
         const datetime = row.original.datetime;
         return (
@@ -211,7 +229,7 @@ const Dashboard = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="dark:text-red bg-red-500"
-              onClick={() => handleDelete(row.original.$id)}
+              // onClick={() => handleDelete(row.original.$id)}
             >
               Delete Order
             </DropdownMenuItem>
@@ -222,7 +240,7 @@ const Dashboard = () => {
   ];
 
   const table = useReactTable({
-    data: orders || [],
+    data: fetchedOrders || [],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
@@ -244,7 +262,7 @@ const Dashboard = () => {
     return theme === "light" ? <LoadingBlack /> : <Loading />;
   }
 
-  if (orders?.length === 0)
+  if (fetchedOrders?.length === 0)
     return (
       <div className="flex items-center justify-center py-60 text-2xl gap-2">
         No more orders found if you want to create{" "}
@@ -272,7 +290,7 @@ const Dashboard = () => {
         />
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto text-gray-700 ">
+            <Button variant="outline" className="ml-auto dark:text-white ">
               Columns <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -332,3 +350,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+export { DeleteOrder };
