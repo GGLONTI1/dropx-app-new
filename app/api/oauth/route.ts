@@ -1,37 +1,30 @@
-import { NextResponse } from "next/server";
+// src/app/oauth/route.js
+
 import { createAdminClient } from "../../../lib/appwrite/appwrite";
 import { cookies } from "next/headers";
+import { NextResponse } from "next/server";
 
-export async function GET(req: { url: string | URL }, res: any) {
-  try {
-    const { searchParams } = new URL(req.url);
-    const secret = searchParams.get("secret");
-    const userId = searchParams.get("userId");
+import { NextRequest } from "next/server";
 
-    console.log("secret", secret);
-    console.log("userId", userId);
+export async function GET(request: NextRequest) {
+  const userId = request.nextUrl.searchParams.get("userId");
+  const secret = request.nextUrl.searchParams.get("secret");
 
-    if (!secret || !userId) {
-      return NextResponse.json(
-        { error: "Missing secret or userId" },
-        { status: 400 }
-      );
-    }
-
-    const { account } = await createAdminClient();
-
-    const session = await account.createSession(secret, userId);
-
-    console.log("session", session);
-
+  const { account } = await createAdminClient();
+  if (!userId || !secret) {
     return NextResponse.json(
-      { message: "User authenticated successfully" },
-      { status: 200 }
-    );
-  } catch (error) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 }
+      { error: "Missing userId or secret" },
+      { status: 400 }
     );
   }
+  const session = await account.createSession(userId, secret);
+
+  (await cookies()).set("appwrite-session", session.secret, {
+    path: "/",
+    httpOnly: true,
+    sameSite: "strict",
+    secure: true,
+  });
+
+  return NextResponse.redirect(`${request.nextUrl.origin}/account`);
 }
