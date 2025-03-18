@@ -2,9 +2,10 @@
 
 import { ProfileFormValues, userDataType } from "@/typings";
 import { createAdminClient, createSessionClient } from "./appwrite";
-import { cookies } from "next/headers";
-import { ID, Query } from "node-appwrite";
+import { cookies, headers } from "next/headers";
+import { ID, OAuthProvider, Query } from "node-appwrite";
 import { OrderData } from "@/components/forms/OrderForm";
+import { redirect } from "next/navigation";
 const { account, database } = await createAdminClient();
 
 export async function SignUp(userData: userDataType) {
@@ -144,6 +145,24 @@ export async function SignOut() {
     console.log(error);
     throw new Error("Failed to sign out user");
   }
+}
+
+export async function signInWithGoogle() {
+  const origin = (await headers()).get("origin");
+  console.log(origin);
+
+  const redirectUrl = await account.createOAuth2Token(
+    OAuthProvider.Google,
+    `${origin}/api/oauth`,
+    `${origin}/sign-in`,
+    []
+  );
+
+  if (!redirectUrl) {
+    throw new Error("Failed to create OAuth2 token");
+  }
+
+  return redirect(redirectUrl);
 }
 
 export async function createOrder(orderData: OrderData) {

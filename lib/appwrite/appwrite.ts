@@ -16,6 +16,8 @@ export async function createSessionClient() {
 
   const account = new Account(client);
 
+  
+
   return {
     account,
     client,
