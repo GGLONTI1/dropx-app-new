@@ -4,7 +4,6 @@ import {
   ContactIcon,
   LayoutDashboard,
   LogOutIcon,
-  MenuIcon,
   PlusCircleIcon,
   User2Icon,
 } from "lucide-react";
@@ -13,7 +12,6 @@ import { useSignOut } from "@/lib/query/queries";
 import { useRouter } from "next/navigation";
 import { ThemeToggle } from "./theme-toggle";
 import Link from "next/link";
-import { Button } from "./ui/button";
 import { MobileNav } from "./mobile-nav";
 import { Sheet, SheetTrigger } from "./ui/sheet";
 

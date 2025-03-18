@@ -350,4 +350,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-export { DeleteOrder };
+// export { DeleteOrder };

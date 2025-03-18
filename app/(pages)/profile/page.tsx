@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect} from "react";
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -20,7 +20,6 @@ import Loading from "@/components/Loading";
 import { useUpdateProfile } from "@/lib/query/queries";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
-
 
 const profileFormSchema = z.object({
   firstName: z.string().min(2, {
@@ -150,8 +149,10 @@ export default function ProfileEdit() {
             )}
           />
           <div className="sticky bottom-0 bg-white dark:bg-black w-full py-4 gap-2 flex items-center justify-center">
-            <Button className="flex w-full" type="button"
-             onClick={() => router.push("/dashboard")}
+            <Button
+              className="flex w-full"
+              type="button"
+              onClick={() => router.push("/dashboard")}
             >
               Cancel
             </Button>

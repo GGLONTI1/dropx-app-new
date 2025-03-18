@@ -70,7 +70,7 @@ export function MobileNav() {
           <SheetHeader>
             <SheetDescription />
             <SheetClose asChild>
-              <button className="absolute right-4 top-4 cursor-pointer text-white">
+              <button className="absolute right-4 top-4 cursor-pointer dark:text-white">
                 <X className="w-6 h-6" />
               </button>
             </SheetClose>
