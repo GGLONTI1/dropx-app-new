@@ -16,13 +16,14 @@ export default function NavButton({
   onClick,
   label,
   title,
+  className,
 }: NavButtonProps) {
   return (
     <Button
       onClick={onClick}
       variant="ghost"
       title={label}
-      className="rounded-lg"
+      className={className}
     >
       {href ? (
         <Link href={href} className="flex gap-2 items-center ">

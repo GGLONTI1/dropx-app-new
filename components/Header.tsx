@@ -32,15 +32,15 @@ export default function Header() {
           <Link href="/dashboard">
             <span className="cursor-pointer">DROP</span>
           </Link>
-          <span className="text-red-500">X</span>
+          <span className="text-red-500 cursor-pointer">X</span>
         </h2>
       </div>
       <div className="hidden md:flex items-center gap-2">
         <NavButton
-          href="/dashboard/create"
+          href="/dashboard"
           label="dashboard"
-          icon={PlusCircleIcon}
-          title="Create Order "
+          icon={LayoutDashboard}
+          title="Dashboard"
           onClick={() => {}}
         />
         <NavButton
@@ -51,17 +51,18 @@ export default function Header() {
           onClick={() => {}}
         />
         <NavButton
-          href="/dashboard"
-          label="dashboard"
-          icon={LayoutDashboard}
-          title="Dashboard"
-          onClick={() => {}}
-        />
-        <NavButton
           href="/contact"
           label="Contact"
           title="Contact"
           icon={ContactIcon}
+          onClick={() => {}}
+        />
+        <NavButton
+          className="hover:bg-green-600"
+          href="/dashboard/create"
+          label="dashboard"
+          icon={PlusCircleIcon}
+          title="Create Order "
           onClick={() => {}}
         />
         <ThemeToggle />

@@ -46,7 +46,6 @@ export function MobileNav() {
       router.push("/sign-in");
     }
   };
-
   const handleNavClick = (href: string) => {
     setLoading(true);
     setOpen(false);
