@@ -3,10 +3,7 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useUserContext } from "@/context/AuthContext";
-import {
-  // useDeleteOrderById,
-  useGetOrdersById,
-} from "@/lib/query/queries";
+import { useDeleteOrderById, useGetOrdersById } from "@/lib/query/queries";
 import { useRouter } from "next/navigation";
 import {
   ColumnDef,
@@ -20,7 +17,12 @@ import {
   getSortedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
-import { ArrowUpDown, ChevronDown, MoreHorizontal } from "lucide-react";
+import {
+  ArrowUpDown,
+  ChevronDown,
+  MoreHorizontal,
+  PlusCircleIcon,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -44,7 +46,7 @@ import Loading from "@/components/Loading";
 import { useTheme } from "next-themes";
 import LoadingBlack from "@/components/LoadingBlack";
 import { format } from "date-fns";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import NavButton from "@/components/NavButton";
 
 type Order = {
   $id: string;
@@ -57,22 +59,6 @@ type Order = {
   price: number;
 };
 
-// function DeleteOrder({ orderId }: { orderId: string }) {
-//   const queryClient = useQueryClient();
-//   const { mutateAsync: deleteOrderById } = useDeleteOrderById();
-
-//   const mutation = useMutation({
-//     mutationFn: () => deleteOrderById(orderId),
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ["orders"] });
-//     },
-//   });
-
-//   return (
-//     <Button onClick={() => mutation.mutate()}>Delete Order</Button>
-//   );
-// }
-
 const Dashboard = () => {
   const router = useRouter();
   const { user } = useUserContext();
@@ -82,7 +68,7 @@ const Dashboard = () => {
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  // const { mutateAsync: deleteOrderById } = useDeleteOrderById();
+  const { mutate: deleteOrder } = useDeleteOrderById();
 
   const handleViewOrder = async (orderId: string) => {
     router.push(`/dashboard/${orderId}`);
@@ -93,10 +79,6 @@ const Dashboard = () => {
       mutate(user.userId);
     }
   }, [user, mutate]);
-
-  // function handleDelete(orderId: string) {
-  //   deleteOrderById(orderId);
-  // }
 
   const columns: ColumnDef<Order>[] = [
     {
@@ -158,7 +140,6 @@ const Dashboard = () => {
         </span>
       ),
     },
-
     {
       accessorKey: "datetime",
       header: () => (
@@ -175,7 +156,6 @@ const Dashboard = () => {
         );
       },
     },
-
     {
       accessorKey: "courier",
       header: () => <span className="dark:text-white">Courier</span>,
@@ -195,7 +175,6 @@ const Dashboard = () => {
         </span>
       ),
     },
-
     {
       id: "actions",
       enableHiding: false,
@@ -229,7 +208,8 @@ const Dashboard = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               className="dark:text-red bg-red-500"
-              // onClick={() => handleDelete(row.original.$id)}
+              onClick={() => deleteOrder(row.original.$id)}
+              disabled={isPending}
             >
               Delete Order
             </DropdownMenuItem>
@@ -238,7 +218,6 @@ const Dashboard = () => {
       ),
     },
   ];
-
   const table = useReactTable({
     data: fetchedOrders || [],
     columns,
@@ -264,14 +243,15 @@ const Dashboard = () => {
 
   if (fetchedOrders?.length === 0)
     return (
-      <div className="flex items-center justify-center py-60 text-2xl gap-2">
-        No more orders found if you want to create{" "}
-        <span
-          className="font-extrabold underlined cursor-pointer hover:text-red-500"
+      <div className="flex flex-col items-center justify-center py-60 text-2xl gap-2">
+        <p>No More Orders Found Here</p>
+        <NavButton
+          href="/dashboard/create"
+          label="dashboard"
+          icon={PlusCircleIcon}
+          title="Create Order "
           onClick={() => router.push("/dashboard/create")}
-        >
-          click here
-        </span>
+        />
       </div>
     );
   return (
@@ -350,4 +330,3 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
-// export { DeleteOrder };

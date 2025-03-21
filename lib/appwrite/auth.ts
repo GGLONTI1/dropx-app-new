@@ -6,6 +6,7 @@ import { cookies, headers } from "next/headers";
 import { ID, OAuthProvider, Query } from "node-appwrite";
 import { OrderData } from "@/components/forms/OrderForm";
 import { redirect } from "next/navigation";
+
 const { account, database } = await createAdminClient();
 
 export async function SignUp(userData: userDataType) {
@@ -148,8 +149,9 @@ export async function SignOut() {
 }
 
 export async function signInWithGoogle() {
-  const origin = (await headers()).get("origin");
-  console.log(origin);
+  const origin = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+
+  console.log("OAuth Origin:", origin);
 
   const redirectUrl = await account.createOAuth2Token(
     OAuthProvider.Google,
@@ -232,14 +234,15 @@ export async function updateProfile(user: ProfileFormValues) {
     throw error;
   }
 }
-// async function deleteOrderById(orderId: string) {
-//   const response = await database.deleteDocument(
-//     process.env.DATABASE_ID!,
-//     process.env.ORDER_COLLECTION_ID!,
-//     orderId
-//   );
-//   return response;
-// }
+
+export async function deleteOrderById(orderId: string) {
+  const response = await database.deleteDocument(
+    process.env.DATABASE_ID!,
+    process.env.ORDER_COLLECTION_ID!,
+    orderId
+  );
+  return response;
+}
 
 export async function getOrderById(orderId: string) {
   try {

@@ -7,12 +7,13 @@ import {
   SignOut,
   SignUp,
   updateProfile,
-  // deleteOrderById,
   getOrdersById,
   getOrderById,
+  deleteOrderById,
 } from "../appwrite/auth";
 import { ProfileFormValues, userDataType } from "@/typings";
 import { OrderData } from "@/components/forms/OrderForm";
+import { toast } from "sonner";
 
 export const useGetUser = () => {
   return useQuery({
@@ -90,22 +91,19 @@ export const useUpdateProfile = () => {
   });
 };
 
-// export const useDeleteOrderById = () => {
-//   const queryClient = useQueryClient();
-//   return useMutation({
-//     mutationFn: (orderId: string) =>
-//       deleteOrderById(orderId, () =>
-//         queryClient.invalidateQueries({ queryKey: ["useDeleteOrderById"] })
-//       ),
-//     onSuccess: () => {
-//       queryClient.invalidateQueries({ queryKey: ["useDeleteOrderById"] });
-//       toast.success("Order deleted successfully!");
-//     },
-//     onError: () => {
-//       toast.error("Failed to delete the order.");
-//     },
-//   });
-// };
+export const useDeleteOrderById = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: (orderId: string) => deleteOrderById(orderId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["orders"] });
+      toast.success("Order deleted successfully!");
+    },
+    onError: () => {
+      toast.error("Failed to delete the order.");
+    },
+  });
+};
 
 export const useViewOrder = (orderId: string) => {
   const queryClient = useQueryClient();
