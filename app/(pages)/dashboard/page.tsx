@@ -47,7 +47,7 @@ import { useTheme } from "next-themes";
 import LoadingBlack from "@/components/LoadingBlack";
 import { format } from "date-fns";
 import NavButton from "@/components/NavButton";
-
+import { DeleteOrderDialogue } from "@/components/DeleteOrderDialogue";
 type Order = {
   $id: string;
   address: string;
@@ -63,22 +63,15 @@ const Dashboard = () => {
   const router = useRouter();
   const { user } = useUserContext();
   const { theme } = useTheme();
-  const { mutate, data: fetchedOrders, isPending } = useGetOrdersById();
+  const { data: fetchedOrders, isPending } = useGetOrdersById(user?.userId);
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
-  const { mutate: deleteOrder } = useDeleteOrderById();
-
+  const [open, setOpen] = useState(false);
   const handleViewOrder = async (orderId: string) => {
     router.push(`/dashboard/${orderId}`);
   };
-
-  useEffect(() => {
-    if (user) {
-      mutate(user.userId);
-    }
-  }, [user, mutate]);
 
   const columns: ColumnDef<Order>[] = [
     {
@@ -193,33 +186,38 @@ const Dashboard = () => {
               Actions
             </DropdownMenuLabel>
             <DropdownMenuItem
-              className="text-black dark:text-white"
+              className="cursor-pointer"
               onClick={() => navigator.clipboard.writeText(row.original.$id)}
             >
               Copy Order ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="text-black dark:text-white"
+              className="cursor-pointer"
               onClick={() => handleViewOrder(row.original.$id)}
             >
               View Order
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem
-              className="dark:text-red bg-red-500"
-              onClick={() => deleteOrder(row.original.$id)}
+              className="cursor-pointer"
               disabled={isPending}
+              onClick={() => setOpen(true)}
             >
               Delete Order
             </DropdownMenuItem>
           </DropdownMenuContent>
+          <DeleteOrderDialogue
+            open={open}
+            setOpen={setOpen}
+            orderId={row.original.$id}
+          />
         </DropdownMenu>
       ),
     },
   ];
-  const table = useReactTable({
-    data: fetchedOrders || [],
+  const table = useReactTable<Order>({
+    data: (fetchedOrders || []) as unknown as Order[],
     columns,
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,

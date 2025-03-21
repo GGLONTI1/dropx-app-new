@@ -71,13 +71,10 @@ export const useGetCouriers = () => {
   });
 };
 
-export const useGetOrdersById = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    mutationFn: (userId: string) => getOrdersById(userId),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["useGetOrdersById"] });
-    },
+export const useGetOrdersById = (userId: string) => {
+  return useQuery({
+    queryKey: ["getOrders", userId],
+    queryFn: () => getOrdersById(userId),
   });
 };
 
@@ -96,12 +93,11 @@ export const useDeleteOrderById = () => {
   return useMutation({
     mutationFn: (orderId: string) => deleteOrderById(orderId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["orders"] });
-      toast.success("Order deleted successfully!");
+      console.log("order deleted");
+
+      queryClient.invalidateQueries({ queryKey: ["getOrders"] });
     },
-    onError: () => {
-      toast.error("Failed to delete the order.");
-    },
+    onError: () => {},
   });
 };
 

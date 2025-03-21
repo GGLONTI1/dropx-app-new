@@ -157,7 +157,11 @@ export async function signInWithGoogle() {
     OAuthProvider.Google,
     `${origin}/api/oauth`,
     `${origin}/sign-in`,
-    []
+    [
+      "https://www.googleapis.com/auth/userinfo.email",
+      "https://www.googleapis.com/auth/userinfo.profile",
+      "https://www.googleapis.com/auth/user.phonenumbers.read",
+    ]
   );
 
   if (!redirectUrl) {
