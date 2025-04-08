@@ -8,6 +8,7 @@ interface userDataType {
   email: string;
   password: string;
 }
+
 interface AuthState {
   user: typeof defaultUser;
   setUser: React.Dispatch<React.SetStateAction<typeof defaultUser>>;

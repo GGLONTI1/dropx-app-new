@@ -6,6 +6,7 @@ import {
   LogOutIcon,
   PlusCircleIcon,
   User2Icon,
+  CreditCardIcon,
 } from "lucide-react";
 import NavButton from "./NavButton";
 import { useSignOut } from "@/lib/query/queries";
@@ -48,6 +49,13 @@ export default function Header() {
           title="Profile"
           label="Profile"
           icon={User2Icon}
+          onClick={() => {}}
+        />
+        <NavButton
+          href="/payment"
+          label="Payment"
+          title="Payment"
+          icon={CreditCardIcon}
           onClick={() => {}}
         />
         <NavButton

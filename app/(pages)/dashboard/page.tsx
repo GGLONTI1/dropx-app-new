@@ -80,6 +80,7 @@ const Dashboard = () => {
       cell: ({ row }) => (
         <Button
           variant="ghost"
+          onClick={() => router.push(`/dashboard/${row.getValue("$id")}`)}
           className="font-medium text-black dark:text-white p-0 h-auto "
         >
           {(row.getValue("$id") as string).slice(0, 8)}

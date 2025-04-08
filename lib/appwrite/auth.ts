@@ -9,6 +9,65 @@ import { redirect } from "next/navigation";
 
 const { account, database } = await createAdminClient();
 
+export async function sendOTP(mobile: any) {
+  try {
+    const response = await fetch("http://localhost:3001/send", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ mobile }),
+    });
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error in sendOTP:", error);
+  }
+}
+
+//create verify OTP
+
+export async function verifyOTP(otp_code: string, userData: userDataType) {
+  const verifyData = {
+    ...userData,
+    otp_code,
+  };
+  try {
+    const response = await fetch("http://localhost:3001/verify", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ verifyData }),
+    });
+    if (!response.ok) {
+      throw new Error("Failed to verify OTP");
+    }
+    const data = await response.json();
+    const { newUser, secret } = data;
+    console.log("newUser:", newUser);
+    console.log(data);
+    
+    
+    const session = await account.createSession(newUser.$id, secret);
+    (await cookies()).set("appwrite-session", session.secret, {
+      path: "/",
+      httpOnly: true,
+      secure: true,
+      sameSite: "strict",
+    });
+    //create a new document in the database
+    const newUserData = await saveUserToDb(userData, newUser.$id);
+    if (!newUserData) {
+      throw new Error("Failed to save user");
+    }
+    return { success: true };
+  } catch (error) {
+    console.error("Error in verifyOTP:", error);
+    throw new Error("Failed to verify OTP");
+  }
+}
+
 export async function SignUp(userData: userDataType) {
   const { email, password, mobile } = userData;
   try {

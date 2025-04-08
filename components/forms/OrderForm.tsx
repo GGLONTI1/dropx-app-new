@@ -19,6 +19,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Command,
+  CommandDialog,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+  CommandShortcut,
+} from "@/components/ui/command";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
@@ -28,6 +39,7 @@ import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { createOrder } from "@/lib/appwrite/auth";
 import { SmartDatetimeInput } from "../ui/smart-datetime-input";
+
 
 const FormSchema = z.object({
   address: z.string().min(2, {
@@ -104,13 +116,14 @@ const OrderForm = () => {
     }
   }
   return (
-    <div className=" flex-1 flex items-center justify-center">
+    <div className="flex-1 flex items-center justify-center">
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <div className="text-center text-2xl font-extrabold py-6">
             Create Order
           </div>
           <div className="flex flex-col space-y-4 w-96">
+            
             <FormField
               control={form.control}
               name="address"
@@ -165,7 +178,7 @@ const OrderForm = () => {
                       <SmartDatetimeInput
                         value={field.value instanceof Date ? field.value : null}
                         onValueChange={(date) => {
-                          field.onChange(date); 
+                          field.onChange(date);
                           setOpen(false);
                         }}
                         placeholder="e.g., tomorrow at 5pm or in 2 hours"

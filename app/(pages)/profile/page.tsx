@@ -21,6 +21,7 @@ import { useUpdateProfile } from "@/lib/query/queries";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 
+
 const profileFormSchema = z.object({
   firstName: z.string().min(2, {
     message: "firstname must be at least 2 characters.",
@@ -166,6 +167,7 @@ export default function ProfileEdit() {
           </div>
         </form>
       </Form>
+      
     </div>
   );
 }

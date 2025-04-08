@@ -16,6 +16,8 @@ import { Input } from "@/components/ui/input";
 import { useRouter } from "next/navigation";
 import { useSignUp } from "@/lib/query/queries";
 import Link from "next/link";
+import { userDataType } from "@/typings";
+import { sendOTP } from "@/lib/appwrite/auth";
 
 const formSchema = z.object({
   firstName: z.string().nonempty(),
@@ -25,7 +27,15 @@ const formSchema = z.object({
   password: z.string().min(8),
 });
 
-const SignUpForm = () => {
+const SignUpForm = ({
+  currentStep,
+  setCurrentStep,
+  setUserData,
+}: {
+  currentStep: number;
+  setCurrentStep: (currentStep: number) => void;
+  setUserData: (obj: userDataType) => void;
+}) => {
   const router = useRouter();
   const { mutateAsync: signUp, isPending: isLoading } = useSignUp();
 
@@ -41,12 +51,15 @@ const SignUpForm = () => {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    console.log(values.mobile);
+    console.log(values);
+
     try {
-      const response = await signUp(values);
-      console.log(response);
-      router.push("/dashboard");
+      const res = await sendOTP(values.mobile);
+      setUserData(values);
+      setCurrentStep(currentStep + 1);
     } catch (error) {
-      console.log(error);
+      console.error("Error:", error);
     }
   }
 
@@ -88,7 +101,6 @@ const SignUpForm = () => {
               )}
             />
           </div>
-
           <FormField
             control={form.control}
             name="mobile"
@@ -137,7 +149,7 @@ const SignUpForm = () => {
               className="flex w-full bg-green-800 hover:bg-green-600 text-white"
               type="submit"
             >
-              {isLoading ? "Loading..." : "Sign Up"}
+              {isLoading ? "Loading..." : "Next"}
             </Button>
           </div>
           <div className="flex justify-center text-center text-sm">
