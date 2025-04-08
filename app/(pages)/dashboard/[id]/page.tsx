@@ -186,13 +186,17 @@ const OrderEdit = () => {
                   <FormLabel>Status</FormLabel>
                   <FormControl>
                     <Select
-                      onValueChange={field.onChange}
+                      onValueChange={(value) => {
+                        if (value) {
+                          field.onChange(value);
+                        }
+                      }}
                       defaultValue={field.value}
                       value={field.value}
                     >
                       <SelectTrigger>
                         <SelectValue placeholder="Select status">
-                          {field.value}
+                          {/* {field.value} */}
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>

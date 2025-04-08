@@ -40,7 +40,6 @@ import { useRouter } from "next/navigation";
 import { createOrder } from "@/lib/appwrite/auth";
 import { SmartDatetimeInput } from "../ui/smart-datetime-input";
 
-
 const FormSchema = z.object({
   address: z.string().min(2, {
     message: "Target must be at least 2 characters.",
@@ -118,12 +117,18 @@ const OrderForm = () => {
   return (
     <div className="flex-1 flex items-center justify-center">
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)}>
+        <form
+          onSubmit={form.handleSubmit(onSubmit)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+            }
+          }}
+        >
           <div className="text-center text-2xl font-extrabold py-6">
             Create Order
           </div>
           <div className="flex flex-col space-y-4 w-96">
-            
             <FormField
               control={form.control}
               name="address"
@@ -226,7 +231,12 @@ const OrderForm = () => {
                 <FormItem>
                   <FormLabel>Price</FormLabel>
                   <FormControl>
-                    <Input type="number" placeholder="0.00" {...field} />
+                    <Input
+                      type="number"
+                      placeholder="0.00"
+                      min={0}
+                      {...field}
+                    />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

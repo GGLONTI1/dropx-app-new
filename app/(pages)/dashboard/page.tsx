@@ -135,12 +135,21 @@ const Dashboard = () => {
     },
     {
       accessorKey: "status",
-      header: () => <span className="dark:text-white ">Status</span>,
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+          className="cursor-pointer"
+        >
+          <span className="dark:text-white ">Status</span>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
+      ),
       cell: ({ row }) => (
         <span
-          className={`capitalize px-2 py-1 rounded-md text-xs font-medium border text-white
+          className={`capitalize px-2 py-1 rounded-md text-xs font-medium border text-white cursor-pointer
           ${
-            row.getValue("status") === "delivered"
+            row.getValue("status") === "completed"
               ? "bg-green-500 border-green-300 dark:border-white/20 dark:bg-opacity-20"
               : row.getValue("status") === "pending"
               ? "bg-yellow-500 border-yellow-300 dark:border-white/20 dark:bg-opacity-20"
@@ -153,8 +162,14 @@ const Dashboard = () => {
     },
     {
       accessorKey: "datetime",
-      header: () => (
-        <span className="dark:text-white md:flex hidden">Date & Time</span>
+      header: ({ column }) => (
+        <Button
+          variant="ghost"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          <span className="dark:text-white md:flex hidden">Date & Time</span>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </Button>
       ),
       cell: ({ row }) => {
         const datetime = row.original.datetime;
