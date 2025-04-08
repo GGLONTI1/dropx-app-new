@@ -70,21 +70,25 @@ const Dashboard = () => {
   console.log(user);
 
   const { theme } = useTheme();
-  const { data: fetchedOrders, isPending } = useGetOrdersById(user?.userId);
+
+  const { data: fetchedOrdersById, isPending: isPendingById } =
+    useGetOrdersById(user?.userId);
+  const { data: fetchedOrdersByCourier, isPending: isPendingByCourier } =
+    useGetOrdersByCourierId(user?.userId);
+
+  const isCourier = user?.type === "courier";
+  const fetchedOrders = isCourier ? fetchedOrdersByCourier : fetchedOrdersById;
+  const isPending = isCourier ? isPendingByCourier : isPendingById;
 
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [rowSelection, setRowSelection] = useState({});
   const [open, setOpen] = useState(false);
+
   const handleViewOrder = async (orderId: string) => {
     router.push(`/dashboard/${orderId}`);
   };
-
-  const { data: fetchedOrdersByCourier } = useGetOrdersByCourierId(
-    user?.userId
-  );
-  console.log("fetchedOrdersByCourier", fetchedOrdersByCourier);
 
   const columns: ColumnDef<Order>[] = [
     {
@@ -230,6 +234,7 @@ const Dashboard = () => {
       ),
     },
   ];
+
   const table = useReactTable<Order>({
     data: (fetchedOrders || []) as unknown as Order[],
     columns,
@@ -266,6 +271,7 @@ const Dashboard = () => {
         />
       </div>
     );
+
   return (
     <div className="flex flex-col w-full px-1 sm:px-6 py-6">
       <h1 className="text-2xl font-bold text-center">

@@ -27,6 +27,8 @@ import { updateOrder } from "@/lib/appwrite/auth";
 import { toast } from "sonner";
 import Loading from "@/components/Loading";
 import { SmartDatetimeInput } from "@/components/ui/smart-datetime-input";
+import { useUserContext } from "@/context/AuthContext";
+import { is } from "date-fns/locale";
 
 const FormSchema = z.object({
   address: z.string().min(2),
@@ -52,6 +54,8 @@ type OrderValues = {
 
 const OrderEdit = () => {
   const router = useRouter();
+  const { user } = useUserContext();
+  const isCourier = user.type === "courier";
   const pathname = usePathname();
   const orderId = pathname.split("/").pop() || "";
   const { data: orderDetails, isLoading } = useGetOrderById(orderId as string);
@@ -125,7 +129,7 @@ const OrderEdit = () => {
                 <FormItem>
                   <FormLabel>Address</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input disabled={isCourier} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -138,7 +142,7 @@ const OrderEdit = () => {
                 <FormItem>
                   <FormLabel>Target Name</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input disabled={isCourier} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -151,7 +155,7 @@ const OrderEdit = () => {
                 <FormItem>
                   <FormLabel>Phone</FormLabel>
                   <FormControl>
-                    <Input {...field} />
+                    <Input disabled={isCourier} {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -164,6 +168,7 @@ const OrderEdit = () => {
                 <FormItem>
                   <FormLabel>Choose Date & Time</FormLabel>
                   <SmartDatetimeInput
+                    disabled={isCourier}
                     value={field.value}
                     onValueChange={field.onChange}
                     placeholder="e.g., tomorrow at 5pm or in 2 hours"
@@ -210,7 +215,7 @@ const OrderEdit = () => {
                 <FormItem>
                   <FormLabel>Price</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input disabled={isCourier} type="number" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>
@@ -220,7 +225,7 @@ const OrderEdit = () => {
               control={form.control}
               name="courier"
               render={({ field }) => (
-                <FormItem>
+                <FormItem className={isCourier ? "hidden" : ""}>
                   <FormLabel>Select Courier</FormLabel>
                   <Select
                     defaultValue={orderDetails?.courier?.$id}
