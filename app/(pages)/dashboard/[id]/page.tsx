@@ -196,7 +196,12 @@ const OrderEdit = () => {
                         </SelectValue>
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="draft">Draft</SelectItem>
+                        <SelectItem
+                          className={isCourier ? "hidden" : ""}
+                          value="draft"
+                        >
+                          Draft
+                        </SelectItem>
                         <SelectItem value="pending">Pending</SelectItem>
                         <SelectItem value="processing">Processing</SelectItem>
                         <SelectItem value="completed">Completed</SelectItem>
