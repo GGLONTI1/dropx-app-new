@@ -342,3 +342,18 @@ export async function updateOrder(orderId: string, orderData: OrderData) {
     throw error;
   }
 }
+
+export async function getOrdersByCourierId(userId: string) {
+  try {
+    const orders = await database.listDocuments(
+      process.env.DATABASE_ID!,
+      process.env.ORDER_COLLECTION_ID!,
+      [Query.equal("courier", userId)]
+    );
+
+    return orders.documents;
+  } catch (error) {
+    console.error("Error loading order:", error);
+    throw error;
+  }
+}

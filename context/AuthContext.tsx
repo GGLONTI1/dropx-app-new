@@ -11,6 +11,7 @@ export const defaultUser = {
   lastName: "",
   mobile: "",
   email: "",
+  type: "",
 };
 
 const AuthContext = createContext<AuthState>({
@@ -31,6 +32,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         lastName: userData.lastName,
         mobile: userData.mobile,
         email: userData.email,
+        type: userData.type,
       });
     }
   }, [userData]);

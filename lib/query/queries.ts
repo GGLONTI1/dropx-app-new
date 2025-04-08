@@ -10,6 +10,7 @@ import {
   getOrdersById,
   getOrderById,
   deleteOrderById,
+  getOrdersByCourierId,
 } from "../appwrite/auth";
 import { ProfileFormValues, userDataType } from "@/typings";
 import { OrderData } from "@/components/forms/OrderForm";
@@ -75,6 +76,7 @@ export const useGetOrdersById = (userId: string) => {
   return useQuery({
     queryKey: ["getOrders", userId],
     queryFn: () => getOrdersById(userId),
+    enabled: !!userId,
   });
 };
 
@@ -93,8 +95,6 @@ export const useDeleteOrderById = () => {
   return useMutation({
     mutationFn: (orderId: string) => deleteOrderById(orderId),
     onSuccess: () => {
-      console.log("order deleted");
-
       queryClient.invalidateQueries({ queryKey: ["getOrders"] });
     },
     onError: () => {},
@@ -116,5 +116,12 @@ export const useGetOrderById = (orderId: string) => {
   return useQuery({
     queryKey: ["getOrderById", orderId],
     queryFn: () => getOrderById(orderId),
+  });
+};
+
+export const useGetOrdersByCourierId = (courierId: string) => {
+  return useQuery({
+    queryKey: ["getOrdersByCourierId", courierId],
+    queryFn: () => getOrdersByCourierId(courierId),
   });
 };

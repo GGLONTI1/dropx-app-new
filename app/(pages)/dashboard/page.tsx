@@ -3,7 +3,11 @@
 import * as React from "react";
 import { useEffect, useState } from "react";
 import { useUserContext } from "@/context/AuthContext";
-import { useDeleteOrderById, useGetOrdersById } from "@/lib/query/queries";
+import {
+  useDeleteOrderById,
+  useGetOrdersByCourierId,
+  useGetOrdersById,
+} from "@/lib/query/queries";
 import { useRouter } from "next/navigation";
 import {
   ColumnDef,
@@ -62,8 +66,12 @@ type Order = {
 const Dashboard = () => {
   const router = useRouter();
   const { user } = useUserContext();
+
+  console.log(user);
+
   const { theme } = useTheme();
   const { data: fetchedOrders, isPending } = useGetOrdersById(user?.userId);
+
   const [sorting, setSorting] = useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
@@ -72,6 +80,11 @@ const Dashboard = () => {
   const handleViewOrder = async (orderId: string) => {
     router.push(`/dashboard/${orderId}`);
   };
+
+  const { data: fetchedOrdersByCourier } = useGetOrdersByCourierId(
+    user?.userId
+  );
+  console.log("fetchedOrdersByCourier", fetchedOrdersByCourier);
 
   const columns: ColumnDef<Order>[] = [
     {
