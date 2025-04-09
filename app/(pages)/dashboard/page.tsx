@@ -93,14 +93,27 @@ const Dashboard = () => {
   const columns: ColumnDef<Order>[] = [
     {
       accessorKey: "$id",
-      header: () => <span className="dark:text-white">Order ID</span>,
-      cell: ({ row }) => (
+      header: ({ column }) => (
+        <div
+          className="flex items-center cursor-pointer"
+          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
+        >
+          <span className="dark:text-white">Order ID</span>
+          <ArrowUpDown className="ml-2 h-4 w-4" />
+        </div>
+      ),
+      cell: ({ row, column }) => (
         <Button
           variant="ghost"
-          onClick={() => router.push(`/dashboard/${row.getValue("$id")}`)}
-          className="font-medium text-black dark:text-white p-0 h-auto "
+          onClick={() => {
+            router.push(`/dashboard/${row.getValue("$id")}`);
+            column.toggleSorting(column.getIsSorted() === "asc");
+          }}
+          className="font-medium text-black dark:text-white p-0 h-auto flex items-center"
         >
-          {(row.getValue("$id") as string).slice(0, 8)}
+          <span className="dark:text-white">
+            {(row.getValue("$id") as string).slice(0, 8)}
+          </span>
         </Button>
       ),
     },
@@ -301,6 +314,16 @@ const Dashboard = () => {
           }
           className="max-w-sm border-gray-300 shadow-sm"
         />
+        
+        <Input
+          placeholder="Filter by Order ID..."
+          value={(table.getColumn("$id")?.getFilterValue() as string) ?? ""}
+          onChange={(e) =>
+            table.getColumn("$id")?.setFilterValue(e.target.value)
+          }
+          className="max-w-sm border-gray-300 shadow-sm"
+        />
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" className="ml-auto dark:text-white ">

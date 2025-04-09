@@ -1,1 +1,4 @@
-data tablezde delet order by id 
+if courier davmalot menudan button create orderis (x) |
+-------------------------------------------------------
+dashbordis searchze filter byId gasaketebelia (x)     |
+-------------------------------------------------------

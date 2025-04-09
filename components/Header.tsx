@@ -15,9 +15,11 @@ import { ThemeToggle } from "./theme-toggle";
 import Link from "next/link";
 import { MobileNav } from "./mobile-nav";
 import { Sheet, SheetTrigger } from "./ui/sheet";
+import { useUserContext } from "@/context/AuthContext";
 
 export default function Header() {
   const router = useRouter();
+  const { user } = useUserContext();
   const { mutateAsync: signOut, isPending } = useSignOut();
 
   const handleLogOut = async () => {
@@ -26,6 +28,9 @@ export default function Header() {
       router.push("/sign-in");
     }
   };
+
+  const isCourier = user?.type === "courier";
+
   return (
     <div className="min-h-16 flex items-center justify-between border-b border-black dark:border-white ">
       <div className="flex items-center">
@@ -65,14 +70,16 @@ export default function Header() {
           icon={ContactIcon}
           onClick={() => {}}
         />
-        <NavButton
-          className="hover:bg-green-600"
-          href="/dashboard/create"
-          label="dashboard"
-          icon={PlusCircleIcon}
-          title="Create Order "
-          onClick={() => {}}
-        />
+        {!isCourier ? (
+          <NavButton
+            className="hover:bg-green-600"
+            href="/dashboard/create"
+            label="dashboard"
+            icon={PlusCircleIcon}
+            title="Create Order"
+            onClick={() => {}}
+          />
+        ) : null}
         <ThemeToggle />
         <div className="bg-red-500 h-5 w-1"></div>{" "}
         <NavButton label="Logout" icon={LogOutIcon} onClick={handleLogOut} />

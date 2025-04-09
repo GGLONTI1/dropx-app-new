@@ -54,7 +54,7 @@ type OrderValues = {
 
 const OrderEdit = () => {
   const router = useRouter();
-  const { user } = useUserContext();
+  const { user, isGettingUser } = useUserContext();
   const isCourier = user.type === "courier";
   const pathname = usePathname();
   const orderId = pathname.split("/").pop() || "";
@@ -107,7 +107,7 @@ const OrderEdit = () => {
     }
   }
 
-  if (isLoading || !orderDetails)
+  if (isLoading || !orderDetails || isGettingUser)
     return (
       <div>
         <Loading />
